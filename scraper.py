@@ -31,6 +31,21 @@ while current_page is not None:
 
 
         par_text = par.text.strip()
+
+        # Replace incorrect whitespacing
+        # TODO Add more whitespacing detection
+        par_text = par_text.replace("  ", " ")
+        par_text = par_text.replace("  ", " ")
+
+        # Extract incorrect characters here:
+        # Replace ■ with:
+        # \begin{center}
+        # ---
+        # \end{center}
+        par_text = par_text.replace("■", "\\begin{center}\n---\n\\end{center}")
+
+        file.write(par_text + '\n\\par\n')
+        
         print(par_text)
 
     # Get Title and Chapter number
