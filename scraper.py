@@ -17,3 +17,8 @@ while current_page is not None:
     for paragraph in paragraphs:
         # TODO Do something interesting here
         print(paragraph)
+
+    # Get Title and Chapter number
+    temp = main_text.find('p', attrs={'style': 'text-align:center;'})
+    chapter_num = temp[0].text.strip()
+    chapter_title = temp[1].text.strip()
