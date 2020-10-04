@@ -1,6 +1,7 @@
 from bs4 import BeautifulSoup as soup
 import requests
 import sys
+import re
 
 # get CLI args
 args = sys.argv
@@ -8,9 +9,20 @@ args = sys.argv
 if args is None:
     sys.exit("Please provide a url as an argument when running this script")
 
+
+def build_url(current_url, chapter_num):
+    new_url = re.sub(r'(\d+/)(\d+)(/.+$)', r'\g<1>' + str(chapter_num) + '\g<3>', current_url)
+    print(new_url)
+    return new_url
+
+
 # -- Scrapping webpage --
 # Specify URL
-current_page = args[0]
+first_page = args[0]
+current_page = first_page
+current_chapter_number = 1
+# default start
+num_chapters = 0
 
 while current_page is not None:
     # query the website and return the html response
@@ -22,9 +34,11 @@ while current_page is not None:
     paragraphs = main_text.find('p')
 
     # Extract Number of Chapters
-    chapter_select = page.find('select',  attrs={'id': 'chap_select'})
-    num_chapters = len(chapter_select.find_all('option'))
-    print("Chapters found: " + num_chapters)
+    # Only run the first time
+    if num_chapters == 0:
+        chapter_select = page.find('select', attrs={'id': 'chap_select'})
+        num_chapters = len(chapter_select.find_all('option'))
+        print("Chapters found: " + str(num_chapters))
 
     # Get Title and Chapter number
     temp = main_text.find('p', attrs={'style': 'text-align:center;'})
@@ -73,3 +87,9 @@ while current_page is not None:
 
     file.write('\\end{document}')
     file.close()
+
+    if current_chapter_number < num_chapters:
+        current_chapter_number = current_chapter_number + 1
+        current_page = build_url(current_page, current_chapter_number)
+    else:
+        current_page = None
