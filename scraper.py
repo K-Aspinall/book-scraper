@@ -13,7 +13,26 @@ while current_page is not None:
 
     main_text = page.find('div', attrs={'class': 'storytextp'})
     paragraphs = main_text.find('p')
+    # -- Extract each paragraph --
+    for par in paragraphs:
+        for par_em in par.find_all('em'):
+            if par_em is not None:
+                new_text = page.new_string('\\textit{' + par_em.text + '}')
+                par_em.replace_with(new_text)
+        for par_br in par.find_all('br'):
+            if par_br is not None:
+                new_text = page.new_string(par_br.text + '\n')
+                par_br.replace_with(new_text)
+        # Add support for Strong/Bold support
+        for par_bold in par.find_all('strong'):
+            if par_bold is not None:
+                new_text = page.new_string('\\textbf{' + par_bold.text + '}')
+                par_bold.replace_with(new_text)
 
-    for paragraph in paragraphs:
-        # TODO Do something interesting here
-        print(paragraph)
+        par_text = par.text.strip()
+        print(par_text)
+
+    # Get Title and Chapter number
+    temp = main_text.find('p', attrs={'style': 'text-align:center;'})
+    chapter_num = temp[0].get_text()
+    chapter_title = temp[1].get_text()
