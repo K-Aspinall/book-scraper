@@ -1,18 +1,30 @@
-from bs4 import BeautifulSoup as bae
+from bs4 import BeautifulSoup as soup
 import requests
+import sys
+
+# get CLI args
+args = sys.argv
+
+if args is None:
+    sys.exit("Please provide a url as an argument when running this script")
 
 # -- Scrapping webpage --
 # Specify URL
-current_page = 'TODO ADD URL HERE'
+current_page = args[0]
 
 while current_page is not None:
     # query the website and return the html response
     response = requests.get(current_page)
     # parse the html using beautiful soup and store as page
-    page = bae(response.content, "html.parser")
+    page = soup(response.content, "html.parser")
 
     main_text = page.find('div', attrs={'class': 'storytextp'})
     paragraphs = main_text.find('p')
+
+    # Extract Number of Chapters
+    chapter_select = page.find('select',  attrs={'id': 'chap_select'})
+    num_chapters = len(chapter_select.find_all('option'))
+    print("Chapters found: " + num_chapters)
 
     # Get Title and Chapter number
     temp = main_text.find('p', attrs={'style': 'text-align:center;'})
