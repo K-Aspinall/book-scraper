@@ -29,6 +29,7 @@ while current_page is not None:
                 new_text = page.new_string('\\textbf{' + par_bold.text + '}')
                 par_bold.replace_with(new_text)
 
+
         par_text = par.text.strip()
         print(par_text)
 
@@ -36,3 +37,4 @@ while current_page is not None:
     temp = main_text.find('p', attrs={'style': 'text-align:center;'})
     chapter_num = temp[0].get_text()
     chapter_title = temp[1].get_text()
+    
